@@ -23,7 +23,6 @@ def file_exist(conn, filename):
             "weight = %s and logP = %s and charge = %s and pH = \"%s\" and purchasability = \"%s\" and reactivity = \"%s\" and type  = \"%s\""  % \
             (values['weight'], values['logP'], values['charge'],
              values['pH'], values['purchasability'], values['reactivity'], filename.split('.')[-1])
-
     c.execute(statement)
     result  = c.fetchall()
     c.close()
@@ -47,7 +46,6 @@ def insert_model_from_file(conn, filename, file_id):
         parser = pdbqt.models
     elif file_type == "mol2":
         parser = mol2.molecules
-    
     with open(filename, 'r') as f:
         for name, data in parser(f.read()):
             statement = "insert into model(name, file_id) values (\"%s\", %s)" % (name, file_id)
@@ -66,9 +64,7 @@ def insert_file(conn, filename):
     elif not os.path.isfile(filename):
         print "filename is not a file"
         sys.exit()
-
     values = zinc15_filename.parse(filename)
-    
     result = file_exist(conn, filename)
     # if there is no entry for this file already, base on zinc15 filename rules
     if result == []:
@@ -83,7 +79,6 @@ def insert_file(conn, filename):
         insert_model_from_file(conn, filename, file_id)
     else:
         print result, "here"
-
     conn.commit()
     c.close()
     return file_id
@@ -121,7 +116,6 @@ def main(directory = 'ligands'):
         for filename in os.listdir('.'):
             insert_file(conn, filename)
         os.chdir('..')
-        
     conn.commit()
     conn.close()
 
@@ -140,7 +134,6 @@ if __name__ == '__main__':
     help_message = "Full path to ligands directory in the structure of " + \
                     "\'directory\'/type where type is the type of files " + \
                     "inside that directory such as \'mol2\'. (default \'ligands\')"
-    
     parser = argparse.ArgumentParser(description="Lingand Databse loader")
     
     parser.add_argument('--postgres', dest='postgres', default=False,
@@ -166,15 +159,12 @@ if __name__ == '__main__':
     
     parser.add_argument('--schema', dest='schema', default='schema.sql',
                         help='Use schema to initlize the databse (default \'schema.sql\'')
-
     args = parser.parse_args()
     POSTGRES = args.postgres and SUPPORT_POSTGRES
     HOST = args.host
     PASSWORD = args.password
     DBNAME = args.dbname
     USER = args.user
-
-
     if args.init:
         if not os.path.isfile(args.schema):
             print "Schema file does not exist, looked at %s" % args.schema
