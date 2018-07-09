@@ -4,7 +4,7 @@ try:
     import psycopg2
     SUPPORT_POSTGRES = True
 except ImportError:
-    print "No support for Posgres, install psycopg2"
+    print "No support for Postgres, install psycopg2"
     SUPPORT_POSTGRES = False
     
 import sys, os
@@ -132,15 +132,15 @@ def create_database(schema):
 if __name__ == '__main__':
     import argparse
     help_message = "Full path to ligands directory in the structure of " + \
-                    "\'directory\'/type where type is the type of files " + \
-                    "inside that directory such as \'mol2\'. (default \'ligands\')"
+                    "\'directory\'/type where type is a directory name after the type of files " + \
+                    "inside it such as \'mol2\'. (default \'ligands\')"
     parser = argparse.ArgumentParser(description="Lingand Databse loader")
     
     parser.add_argument('--postgres', dest='postgres', default=False,
                         action='store_true', help="Use postgres (default False)")
     
     parser.add_argument('--init', dest='init', default=False,
-                        action='store_true', help="Initlize databse using schema file")
+                        action='store_true', help="Initlize databse using schema file (default False)")
 
     parser.add_argument('--ligand-directory', dest='directory',
                         default='ligands', help=help_message)
@@ -155,10 +155,10 @@ if __name__ == '__main__':
                         help='User to log into the databse (default \'postgres\')')
     
     parser.add_argument('--password', dest='password', default='secret',
-                        help="Password to use to connect to the database (default \'secret\')")
+                        help="Postgres db password (default \'secret\')")
     
     parser.add_argument('--schema', dest='schema', default='schema.sql',
-                        help='Use schema to initlize the databse (default \'schema.sql\'')
+                        help='Schema to initlize the databse (default \'schema.sql\')')
     args = parser.parse_args()
     POSTGRES = args.postgres and SUPPORT_POSTGRES
     HOST = args.host
