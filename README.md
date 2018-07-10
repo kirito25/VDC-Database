@@ -5,8 +5,8 @@ and using the file name structure.
 
 Layout:
 - ligands     - A directory containing lingands organized into directories
-                of their type such as, a "mol2" directory will contain
-                only mol2 files.
+                of their source followed by their type such as, ligands/zinc15/mol2
+                will contain all the mol2 files that were downloaded from ZINC15
 
 - schema.sql  - Database schema
 

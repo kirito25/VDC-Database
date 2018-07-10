@@ -12,7 +12,7 @@ from utils import zinc15_filename, pdbqt, mol2
 import subprocess
 
 
-def file_exist(conn, filename):
+def file_exist(conn, filename, catalog):
     """
     Check the database for an entry with filename properties
     and return the fetchall()
@@ -20,9 +20,9 @@ def file_exist(conn, filename):
     values = zinc15_filename.parse_filename(filename)
     c = conn.cursor()
     statement = "select file_id from file where " + \
-            "weight = %s and logP = %s and charge = %s and pH = \"%s\" and purchasability = \"%s\" and reactivity = \"%s\" and type  = \"%s\""  % \
+            "weight = %s and logP = %s and charge = %s and pH = \"%s\" and purchasability = \"%s\" and reactivity = \"%s\" and type  = \"%s\" and catalog = \"%s\""  % \
             (values['weight'], values['logP'], values['charge'],
-             values['pH'], values['purchasability'], values['reactivity'], filename.split('.')[-1])
+             values['pH'], values['purchasability'], values['reactivity'], filename.split('.')[-1], catalog)
     c.execute(statement)
     result  = c.fetchall()
     c.close()
@@ -54,7 +54,7 @@ def insert_model_from_file(conn, filename, file_id):
     c.close()
 
 
-def insert_file(conn, filename):
+def insert_file(conn, filename, catalog):
     c = conn.cursor()
     file_id = -1
 
@@ -65,14 +65,14 @@ def insert_file(conn, filename):
         print "filename is not a file"
         sys.exit()
     values = zinc15_filename.parse(filename)
-    result = file_exist(conn, filename)
+    result = file_exist(conn, filename, catalog)
     # if there is no entry for this file already, base on zinc15 filename rules
     if result == []:
         statement = "insert into file(filename, weight, logP, charge, pH," + \
-                "purchasability, reactivity, type) values " + \
-                "(\"%s\", %s, %s, %s, \"%s\", \"%s\", \"%s\", \"%s\")" % \
+                "purchasability, reactivity, type, catalog) values " + \
+                "(\"%s\", %s, %s, %s, \"%s\", \"%s\", \"%s\", \"%s\", \"%s\")" % \
                 (filename, values['weight'], values['logP'], values['charge'],
-                 values['pH'], values['purchasability'], values['reactivity'], values['type'])
+                 values['pH'], values['purchasability'], values['reactivity'], values['type'], catalog)
         
         c.execute(statement)
         file_id = c.lastrowid
@@ -111,10 +111,13 @@ def main(directory = 'ligands'):
         print "Looking for ./%s, Directory does not exist" % (directory)
         sys.exit()
 
-    for directory in os.listdir('.'):
-        os.chdir(directory)
-        for filename in os.listdir('.'):
-            insert_file(conn, filename)
+    for catalog in os.listdir('.'):
+        os.chdir(catalog)
+        for file_type in os.listdir('.'):
+            os.chdir(file_type)
+            for filename in os.listdir('.'):
+                insert_file(conn, filename, catalog)
+            os.chdir('..')
         os.chdir('..')
     conn.commit()
     conn.close()
@@ -132,7 +135,8 @@ def create_database(schema):
 if __name__ == '__main__':
     import argparse
     help_message = "Full path to ligands directory in the structure of " + \
-                    "\'directory\'/type where type is a directory name after the type of files " + \
+                    "\'directory\'/catalog/type, where catalog is the source of the ligangs and " + \
+                    "where type is a directory name after the type of files " + \
                     "inside it such as \'mol2\'. (default \'ligands\')"
     parser = argparse.ArgumentParser(description="Lingand Databse loader")
     

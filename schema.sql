@@ -10,6 +10,7 @@ CREATE TABLE file (
 	"file_id" INTEGER PRIMARY KEY AUTOINCREMENT,
 	"filename" character(255) NOT NULL,
 	"type" character(255) NOT NULL,
+	"catalog" character(255) NOT NULL,
 	"weight" bigint NOT NULL,
 	"logP" int NOT NULL,
 	"charge" int NOT NULL,
