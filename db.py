@@ -135,7 +135,7 @@ def create_database(schema):
 if __name__ == '__main__':
     import argparse
     help_message = "Full path to ligands directory in the structure of " + \
-                    "\'directory\'/catalog/type, where catalog is the source of the ligangs and " + \
+                    "\'directory\'/catalog/type, where catalog is the source of the ligands and " + \
                     "where type is a directory name after the type of files " + \
                     "inside it such as \'mol2\'. (default \'ligands\')"
     parser = argparse.ArgumentParser(description="Lingand Databse loader")
