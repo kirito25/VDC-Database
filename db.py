@@ -78,13 +78,13 @@ def insert_file(conn, filename):
         file_id = c.lastrowid
         insert_model_from_file(conn, filename, file_id)
     else:
-        print result, "here"
+        print "File %s already in the database, not doing anything ..." % filename
     conn.commit()
     c.close()
     return file_id
     
 
-def connect(db = 'test.db'):
+def connect(db):
     if POSTGRES:
         conn_string = "host='%s' dbname='%s' user='%s' password='%s'" % \
                         (HOST, DBNAME, USER, PASSWORD)
@@ -101,7 +101,7 @@ def connect(db = 'test.db'):
 
 
 def main(directory = 'ligands'):
-    conn = connect()
+    conn = connect(SQLITE3_DBNAME)
     try:
         os.chdir(directory)
     except IndexError:
@@ -125,7 +125,7 @@ def create_database(schema):
     if POSTGRES:
         command = "psql -f %s" % schema
     else:
-        command = "sqlite3 test.db < %s" % schema
+        command = "sqlite3 %s < %s" % (SQLITE3_DBNAME, schema)
     subprocess.call(command, shell=True)
 
 
@@ -159,12 +159,18 @@ if __name__ == '__main__':
     
     parser.add_argument('--schema', dest='schema', default='schema.sql',
                         help='Schema to initlize the databse (default \'schema.sql\')')
+    
+    parser.add_argument('--sqlite3-name', dest='sqlite3_name', default='ligands.db',
+                        help='The name of the SQLite3 Database (default \'ligands.db\')')
+
     args = parser.parse_args()
     POSTGRES = args.postgres and SUPPORT_POSTGRES
     HOST = args.host
     PASSWORD = args.password
     DBNAME = args.dbname
     USER = args.user
+    SQLITE3_DBNAME = args.sqlite3_name 
+
     if args.init:
         if not os.path.isfile(args.schema):
             print "Schema file does not exist, looked at %s" % args.schema
