@@ -126,7 +126,8 @@ def main(directory = 'ligands'):
 def create_database(schema):
     import subprocess
     if POSTGRES:
-        command = "psql -f %s" % schema
+        print "No support for initlizing a postgres database"
+        sys.exit(-1)
     else:
         command = "sqlite3 %s < %s" % (SQLITE3_DBNAME, schema)
     subprocess.call(command, shell=True)
