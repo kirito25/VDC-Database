@@ -16,3 +16,13 @@ Layout:
 
 - db.py       - script to load the data when provided a directory containing
                 the files to add
+
+
+## Running
+```
+$ python db.py -h
+
+or 
+
+$ ./db.py -h
+```
