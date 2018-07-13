@@ -101,9 +101,7 @@ def parse_filename(name):
 def parse(filename):
     """
     Takes a filename from dowloaded from zinc15 tranches and
-    return a dictionary of what the file name means, the file, and
-    a set of the name of the models inside the file.
-    Refer to _parse for the filename meaning
+    return a dictionary of what the file name means, the file..
     """
     a = parse_filename(filename[:6])
     if a is None:
